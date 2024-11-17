@@ -5,12 +5,12 @@ export function initializeSwagger(app: INestApplication<any>) {
     const apiVersion = '1.0.0'
     const config = new DocumentBuilder()
         .setTitle(`Nest Restaurant API`)
-        .setDescription(`API Documentation - V${apiVersion}`)
+        .setDescription(`API Documentation v${apiVersion}`)
         .setVersion(apiVersion)
         .addBearerAuth()
         .build();
     const document = SwaggerModule.createDocument(app, config);
-    SwaggerModule.setup('apidocs/v1', app, document, {
+    SwaggerModule.setup('api-docs/v1', app, document, {
         swaggerOptions: { defaultModelsExpandDepth: -1, tagsSorter: 'alpha' },
     });
 }

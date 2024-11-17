@@ -1,26 +1,39 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { CreateFoodCategoryDto } from './dto/create-food-category.dto';
 import { UpdateFoodCategoryDto } from './dto/update-food-category.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { FoodCategory } from './entities/food-category.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class FoodCategoryService {
-  create(createFoodCategoryDto: CreateFoodCategoryDto) {
-    return 'This action adds a new foodCategory';
-  }
+    constructor(
+        @InjectRepository(FoodCategory)
+        private readonly foodCategoryRepository: Repository<FoodCategory>,
+    ) { }
+    async create(createFoodCategoryDto: CreateFoodCategoryDto) {
+        const nameExist = await this.foodCategoryRepository.exists({ where: { name: createFoodCategoryDto.name } })
+        if (nameExist) {
+            throw new ConflictException('The food category name already exists.');
+        }
+        const foodCategory = this.foodCategoryRepository.create(createFoodCategoryDto)
+        await this.foodCategoryRepository.save(foodCategory)
+        return foodCategory;
+    }
 
-  findAll() {
-    return `This action returns all foodCategory`;
-  }
+    findAll() {
+        return `This action returns all foodCategory`;
+    }
 
-  findOne(id: number) {
-    return `This action returns a #${id} foodCategory`;
-  }
+    findOne(id: number) {
+        return `This action returns a #${id} foodCategory`;
+    }
 
-  update(id: number, updateFoodCategoryDto: UpdateFoodCategoryDto) {
-    return `This action updates a #${id} foodCategory`;
-  }
+    update(id: number, updateFoodCategoryDto: UpdateFoodCategoryDto) {
+        return `This action updates a #${id} foodCategory`;
+    }
 
-  remove(id: number) {
-    return `This action removes a #${id} foodCategory`;
-  }
+    remove(id: number) {
+        return `This action removes a #${id} foodCategory`;
+    }
 }

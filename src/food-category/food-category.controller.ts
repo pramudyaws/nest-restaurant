@@ -3,32 +3,32 @@ import { FoodCategoryService } from './food-category.service';
 import { CreateFoodCategoryDto } from './dto/create-food-category.dto';
 import { UpdateFoodCategoryDto } from './dto/update-food-category.dto';
 
-@Controller('food-category')
+@Controller('food-categories')
 export class FoodCategoryController {
-  constructor(private readonly foodCategoryService: FoodCategoryService) {}
+    constructor(private readonly foodCategoryService: FoodCategoryService) { }
 
-  @Post()
-  create(@Body() createFoodCategoryDto: CreateFoodCategoryDto) {
-    return this.foodCategoryService.create(createFoodCategoryDto);
-  }
+    @Post()
+    async create(@Body() createFoodCategoryDto: CreateFoodCategoryDto) {
+        return await this.foodCategoryService.create(createFoodCategoryDto);
+    }
 
-  @Get()
-  findAll() {
-    return this.foodCategoryService.findAll();
-  }
+    @Get()
+    findAll() {
+        return this.foodCategoryService.findAll();
+    }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.foodCategoryService.findOne(+id);
-  }
+    @Get(':id')
+    findOne(@Param('id') id: string) {
+        return this.foodCategoryService.findOne(+id);
+    }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateFoodCategoryDto: UpdateFoodCategoryDto) {
-    return this.foodCategoryService.update(+id, updateFoodCategoryDto);
-  }
+    @Patch(':id')
+    update(@Param('id') id: string, @Body() updateFoodCategoryDto: UpdateFoodCategoryDto) {
+        return this.foodCategoryService.update(+id, updateFoodCategoryDto);
+    }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.foodCategoryService.remove(+id);
-  }
+    @Delete(':id')
+    remove(@Param('id') id: string) {
+        return this.foodCategoryService.remove(+id);
+    }
 }
