@@ -13,22 +13,22 @@ export class FoodCategoryController {
     }
 
     @Get()
-    findAll() {
-        return this.foodCategoryService.findAll();
+    async findAll() {
+        return await this.foodCategoryService.findAll();
     }
 
     @Get(':id')
-    findOne(@Param('id') id: string) {
-        return this.foodCategoryService.findOne(+id);
+    async findOne(@Param('id') id: string) {
+        return await this.foodCategoryService.findOne(+id);
     }
 
     @Patch(':id')
-    update(@Param('id') id: string, @Body() updateFoodCategoryDto: UpdateFoodCategoryDto) {
-        return this.foodCategoryService.update(+id, updateFoodCategoryDto);
+    async update(@Param('id') id: string, @Body() updateFoodCategoryDto: UpdateFoodCategoryDto) {
+        return await this.foodCategoryService.update(+id, updateFoodCategoryDto);
     }
 
     @Delete(':id')
-    remove(@Param('id') id: string) {
-        return this.foodCategoryService.remove(+id);
+    async remove(@Param('id') id: string) {
+        return await this.foodCategoryService.remove(+id);
     }
 }
