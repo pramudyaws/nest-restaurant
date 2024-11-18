@@ -8,6 +8,7 @@ import { databaseConfig } from './shared/configs/database.config';
 import { APP_PIPE } from '@nestjs/core';
 import { ZodValidationPipe } from 'nestjs-zod';
 import { UserModule } from './user/user.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
     imports: [
@@ -19,7 +20,8 @@ import { UserModule } from './user/user.module';
             inject: [ConfigService],
         }),
         FoodCategoryModule,
-        UserModule
+        UserModule,
+        AuthModule
     ],
     controllers: [AppController],
     providers: [
