@@ -1,16 +1,8 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { BaseEntity } from "src/shared/entities/base.entity";
+import { Column, Entity } from "typeorm";
 
 @Entity({ name: 'food_categories' })
-export class FoodCategory {
-    @PrimaryGeneratedColumn()
-    id: number;
-
-    @CreateDateColumn({ type: 'timestamptz' })
-    createdAt: Date;
-
-    @UpdateDateColumn({ type: 'timestamptz' })
-    updatedAt: Date;
-
+export class FoodCategory extends BaseEntity {
     @Column({ unique: true })
     name: string;
 }
