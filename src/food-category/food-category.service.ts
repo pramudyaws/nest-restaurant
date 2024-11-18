@@ -14,7 +14,7 @@ export class FoodCategoryService {
     async create(createFoodCategoryDto: CreateFoodCategoryDto) {
         const nameExist = await this.foodCategoryRepository.exists({ where: { name: createFoodCategoryDto.name } })
         if (nameExist) {
-            throw new ConflictException('The food category name already exists.');
+            throw new ConflictException('The food category name already exists');
         }
         const foodCategory = this.foodCategoryRepository.create(createFoodCategoryDto)
         await this.foodCategoryRepository.save(foodCategory)
@@ -41,7 +41,7 @@ export class FoodCategoryService {
                 where: { name, id: Not(id) },
             });
             if (nameExist) {
-                throw new ConflictException('The food category name already exists.');
+                throw new ConflictException('The food category name already exists');
             }
         }
 
@@ -53,6 +53,5 @@ export class FoodCategoryService {
         const foodCategory = await this.foodCategoryRepository.findOne({ where: { id } });
         if (!foodCategory) throw new NotFoundException(`Food category with ID ${id} not found`);
         await this.foodCategoryRepository.remove(foodCategory)
-        return { message: `Food category with ID ${id} has been removed` };
     }
 }
