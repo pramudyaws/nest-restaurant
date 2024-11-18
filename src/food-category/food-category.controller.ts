@@ -5,7 +5,7 @@ import { UpdateFoodCategoryDto } from './dto/update-food-category.dto';
 import { ResponseDto } from 'src/shared/dto/response.dto';
 import { FoodCategory } from './entities/food-category.entity';
 
-@Controller('food-categories')
+@Controller('api/v1/food-categories')
 export class FoodCategoryController {
     constructor(private readonly foodCategoryService: FoodCategoryService) { }
 
