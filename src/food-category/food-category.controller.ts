@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, HttpStatus } from '@nestjs/common';
 import { FoodCategoryService } from './food-category.service';
 import { CreateFoodCategoryDto } from './dto/create-food-category.dto';
 import { UpdateFoodCategoryDto } from './dto/update-food-category.dto';
@@ -13,7 +13,7 @@ export class FoodCategoryController {
     async create(@Body() createFoodCategoryDto: CreateFoodCategoryDto): Promise<ResponseDto<FoodCategory>> {
         const foodCategory = await this.foodCategoryService.create(createFoodCategoryDto);
         return {
-            statusCode: 201,
+            statusCode: HttpStatus.CREATED,
             message: 'Food category created successfully',
             data: foodCategory,
         };
@@ -23,7 +23,7 @@ export class FoodCategoryController {
     async findAll(): Promise<ResponseDto<FoodCategory[]>> {
         const foodCategories = await this.foodCategoryService.findAll();
         return {
-            statusCode: 200,
+            statusCode: HttpStatus.OK,
             message: 'Food categories retrieved successfully',
             data: foodCategories,
         };
@@ -33,7 +33,7 @@ export class FoodCategoryController {
     async findOne(@Param('id') id: string): Promise<ResponseDto<FoodCategory>> {
         const foodCategory = await this.foodCategoryService.findOne(+id);
         return {
-            statusCode: 200,
+            statusCode: HttpStatus.OK,
             message: 'Food category retrieved successfully',
             data: foodCategory,
         };
@@ -46,7 +46,7 @@ export class FoodCategoryController {
     ): Promise<ResponseDto<FoodCategory>> {
         const updatedFoodCategory = await this.foodCategoryService.update(+id, updateFoodCategoryDto);
         return {
-            statusCode: 200,
+            statusCode: HttpStatus.OK,
             message: 'Food category updated successfully',
             data: updatedFoodCategory,
         };
@@ -56,7 +56,7 @@ export class FoodCategoryController {
     async remove(@Param('id') id: string): Promise<ResponseDto<null>> {
         await this.foodCategoryService.remove(+id);
         return {
-            statusCode: 200,
+            statusCode: HttpStatus.OK,
             message: `Food category with ID ${id} removed successfully`,
             data: null,
         };
