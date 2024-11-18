@@ -1,8 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Not, Repository } from 'typeorm';
 
 @Injectable()
 export class UserService {
@@ -10,19 +10,39 @@ export class UserService {
         @InjectRepository(User)
         private readonly userRepository: Repository<User>,
     ) { }
-    findAll() {
-        return `This action returns all user`;
+    async findAll() {
+        const users = await this.userRepository.find();
+        return users.map(user => ({ ...user, password: undefined }));
     }
 
-    findOne(id: number) {
-        return `This action returns a #${id} user`;
+    async findOne(id: number) {
+        const user = await this.userRepository.findOne({ where: { id } })
+        if (!user) throw new NotFoundException(`User with ID ${id} not found`);
+        return { ...user, password: undefined };
     }
 
-    update(id: number, updateUserDto: UpdateUserDto) {
-        return `This action updates a #${id} user`;
+    async update(id: number, updateUserDto: UpdateUserDto) {
+        const user = await this.userRepository.findOne({ where: { id } });
+        if (!user) throw new NotFoundException(`User with ID ${id} not found`);
+
+        const { email } = updateUserDto;
+        if (email) {
+            const emailExist = await this.userRepository.exists({
+                where: { email, id: Not(id) },
+            });
+            if (emailExist) {
+                throw new ConflictException('The user email already exists');
+            }
+        }
+
+        Object.assign(user, updateUserDto);
+        const updatedUser = await this.userRepository.save(user)
+        return { ...updatedUser, password: undefined };
     }
 
-    remove(id: number) {
-        return `This action removes a #${id} user`;
+    async remove(id: number) {
+        const user = await this.userRepository.findOne({ where: { id } });
+        if (!user) throw new NotFoundException(`User with ID ${id} not found`);
+        await this.userRepository.remove(user)
     }
 }
