@@ -7,7 +7,7 @@ import { FoodCategory } from './entities/food-category.entity';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { RolesGuard } from 'src/auth/roles.guard';
 import { Roles } from 'src/shared/decorators/roles.decorator';
-import { AuthGuard } from 'src/auth/auth.guard';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 
 @Controller('api/v1/food-categories')
 @ApiTags("Food Category Management")
@@ -16,7 +16,7 @@ export class FoodCategoryController {
 
     @Post()
     @ApiBearerAuth()
-    @UseGuards(AuthGuard, RolesGuard)
+    @UseGuards(JwtAuthGuard, RolesGuard)
     @Roles(['admin'])
     async create(@Body() createFoodCategoryDto: CreateFoodCategoryDto): Promise<ResponseDto<FoodCategory>> {
         const foodCategory = await this.foodCategoryService.create(createFoodCategoryDto);
@@ -49,7 +49,7 @@ export class FoodCategoryController {
 
     @Patch(':id')
     @ApiBearerAuth()
-    @UseGuards(AuthGuard, RolesGuard)
+    @UseGuards(JwtAuthGuard, RolesGuard)
     @Roles(['admin'])
     async update(
         @Param('id') id: string,
@@ -65,7 +65,7 @@ export class FoodCategoryController {
 
     @Delete(':id')
     @ApiBearerAuth()
-    @UseGuards(AuthGuard, RolesGuard)
+    @UseGuards(JwtAuthGuard, RolesGuard)
     @Roles(['admin'])
     async remove(@Param('id') id: string): Promise<ResponseDto<null>> {
         await this.foodCategoryService.remove(+id);
