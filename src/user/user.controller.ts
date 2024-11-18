@@ -1,4 +1,4 @@
-import { Controller, Get, Body, Patch, Param, Delete, HttpStatus, UseGuards } from '@nestjs/common';
+import { Controller, Get, Body, Patch, Param, Delete, HttpStatus, UseGuards, Req, ForbiddenException } from '@nestjs/common';
 import { UserService } from './user.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
@@ -28,7 +28,10 @@ export class UserController {
 
     @Get(':id')
     @Roles(['admin', 'user'])
-    async findOne(@Param('id') id: string): Promise<ResponseDto<User>> {
+    async findOne(@Req() req: any, @Param('id') id: string): Promise<ResponseDto<User>> {
+        const userValid = await this.userService.validateUser(req.user.role, +req.user.id, +id)
+        if (!userValid) throw new ForbiddenException('You are not allowed to retrieve this user data');
+
         const user = await this.userService.findOne(+id);
         return {
             statusCode: HttpStatus.OK,
@@ -40,9 +43,13 @@ export class UserController {
     @Patch(':id')
     @Roles(['admin', 'user'])
     async update(
+        @Req() req: any,
         @Param('id') id: string,
         @Body() updateUserDto: UpdateUserDto,
     ): Promise<ResponseDto<User>> {
+        const userValid = await this.userService.validateUser(req.user.role, +req.user.id, +id)
+        if (!userValid) throw new ForbiddenException('You are not allowed to update this user');
+
         const updatedUser = await this.userService.update(+id, updateUserDto);
         return {
             statusCode: HttpStatus.OK,
@@ -53,7 +60,10 @@ export class UserController {
 
     @Delete(':id')
     @Roles(['admin', 'user'])
-    async remove(@Param('id') id: string): Promise<ResponseDto<null>> {
+    async remove(@Req() req: any, @Param('id') id: string): Promise<ResponseDto<null>> {
+        const userValid = await this.userService.validateUser(req.user.role, +req.user.id, +id)
+        if (!userValid) throw new ForbiddenException('You are not allowed to delete this user');
+
         await this.userService.remove(+id);
         return {
             statusCode: HttpStatus.OK,

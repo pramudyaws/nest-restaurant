@@ -45,4 +45,8 @@ export class UserService {
         if (!user) throw new NotFoundException(`User with ID ${id} not found`);
         await this.userRepository.remove(user)
     }
+
+    async validateUser(requesterRole: string, requesterId: number, userId: number) {
+        return requesterRole === 'user' && requesterId === userId;
+    }
 }
