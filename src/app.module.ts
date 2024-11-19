@@ -7,6 +7,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { databaseConfig } from './shared/configs/database.config';
 import { APP_PIPE } from '@nestjs/core';
 import { ZodValidationPipe } from 'nestjs-zod';
+import { UserModule } from './user/user.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
     imports: [
@@ -17,7 +19,9 @@ import { ZodValidationPipe } from 'nestjs-zod';
             useFactory: databaseConfig,
             inject: [ConfigService],
         }),
-        FoodCategoryModule
+        FoodCategoryModule,
+        UserModule,
+        AuthModule
     ],
     controllers: [AppController],
     providers: [
