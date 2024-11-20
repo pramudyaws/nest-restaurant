@@ -8,7 +8,7 @@ import { RolesGuard } from 'src/auth/roles.guard';
 import { Roles } from 'src/shared/decorators/roles.decorator';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 
-@Controller('api/v1/user')
+@Controller('api/v1/users')
 @ApiTags("User Management")
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard, RolesGuard)
