@@ -7,6 +7,8 @@ import * as bcrypt from 'bcrypt';
 import { LoginUserDto } from "./dto/login-user.dto";
 import { JwtService } from "@nestjs/jwt";
 import { MailService } from "src/mail/mail.service";
+import { InjectQueue } from "@nestjs/bullmq";
+import { Queue } from "bullmq";
 
 @Injectable()
 export class AuthService {
@@ -16,6 +18,9 @@ export class AuthService {
 
         private readonly jwtService: JwtService,
         private readonly mailService: MailService,
+        
+        @InjectQueue('sendEmail') 
+        private readonly sendEmailQueue: Queue
     ) { }
 
     async register(createUserDto: CreateUserDto) {
@@ -27,8 +32,11 @@ export class AuthService {
         const user = this.userRepository.create({ ...createUserDto, password: hashedPassword })
         await this.userRepository.save(user)
 
-        // Send email
-        await this.mailService.sendRegisterSuccess(user);
+        // Add send email to queue
+        await this.sendEmailQueue.add('sendRegisterSuccess', { 
+            email: user.email, 
+            name: user.name 
+        });
         
         return { ...user, password: undefined };
     }

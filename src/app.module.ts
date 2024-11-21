@@ -10,6 +10,7 @@ import { ZodValidationPipe } from 'nestjs-zod';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { FoodModule } from './food/food.module';
+import { BullModule } from '@nestjs/bullmq';
 
 @Module({
     imports: [
@@ -19,6 +20,15 @@ import { FoodModule } from './food/food.module';
         TypeOrmModule.forRootAsync({
             useFactory: databaseConfig,
             inject: [ConfigService],
+        }),
+        BullModule.forRootAsync({
+            inject: [ConfigService],
+            useFactory: (configService: ConfigService) => ({
+                connection: {
+                    host: configService.get<string>('REDIS_HOST', 'localhost'),
+                    port: configService.get<number>('REDIS_PORT', 6379),
+                },
+            }),
         }),
         FoodCategoryModule,
         UserModule,
