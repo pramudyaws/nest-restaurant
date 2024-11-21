@@ -6,9 +6,7 @@ import { Repository } from "typeorm";
 import * as bcrypt from 'bcrypt';
 import { LoginUserDto } from "./dto/login-user.dto";
 import { JwtService } from "@nestjs/jwt";
-import { MailService } from "src/mail/mail.service";
-import { InjectQueue } from "@nestjs/bullmq";
-import { Queue } from "bullmq";
+import { QueueService } from "src/queue/queue.service";
 
 @Injectable()
 export class AuthService {
@@ -17,10 +15,7 @@ export class AuthService {
         private readonly userRepository: Repository<User>,
 
         private readonly jwtService: JwtService,
-        private readonly mailService: MailService,
-        
-        @InjectQueue('sendEmail') 
-        private readonly sendEmailQueue: Queue
+        private readonly queueService: QueueService
     ) { }
 
     async register(createUserDto: CreateUserDto) {
@@ -33,10 +28,7 @@ export class AuthService {
         await this.userRepository.save(user)
 
         // Add send email to queue
-        await this.sendEmailQueue.add('sendRegisterSuccess', { 
-            email: user.email, 
-            name: user.name 
-        });
+        await this.queueService.sendEmailRegistrationSuccess(user.email, user.name);
         
         return { ...user, password: undefined };
     }

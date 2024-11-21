@@ -8,7 +8,6 @@ import { ConfigModule, ConfigService } from "@nestjs/config";
 import { PassportModule } from "@nestjs/passport";
 import { JwtStrategy } from "./jwt.strategy";
 import { MailModule } from "src/mail/mail.module";
-import { BullModule } from "@nestjs/bullmq";
 
 @Global()
 @Module({
@@ -23,10 +22,7 @@ import { BullModule } from "@nestjs/bullmq";
                 signOptions: { expiresIn: '1d' },
             }),
         }),
-        MailModule,
-        BullModule.registerQueue({
-            name: 'sendEmail',
-        })
+        MailModule
     ],
     controllers: [AuthController],
     providers: [AuthService, JwtStrategy],

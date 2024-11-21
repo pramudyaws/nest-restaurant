@@ -11,6 +11,7 @@ import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { FoodModule } from './food/food.module';
 import { BullModule } from '@nestjs/bullmq';
+import { QueueModule } from './queue/queue.module';
 
 @Module({
     imports: [
@@ -33,7 +34,8 @@ import { BullModule } from '@nestjs/bullmq';
         FoodCategoryModule,
         UserModule,
         AuthModule,
-        FoodModule
+        FoodModule,
+        QueueModule
     ],
     controllers: [AppController],
     providers: [
