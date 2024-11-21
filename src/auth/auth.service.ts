@@ -6,13 +6,16 @@ import { Repository } from "typeorm";
 import * as bcrypt from 'bcrypt';
 import { LoginUserDto } from "./dto/login-user.dto";
 import { JwtService } from "@nestjs/jwt";
+import { QueueService } from "src/queue/queue.service";
 
 @Injectable()
 export class AuthService {
     constructor(
         @InjectRepository(User)
         private readonly userRepository: Repository<User>,
+
         private readonly jwtService: JwtService,
+        private readonly queueService: QueueService
     ) { }
 
     async register(createUserDto: CreateUserDto) {
@@ -23,6 +26,10 @@ export class AuthService {
         const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
         const user = this.userRepository.create({ ...createUserDto, password: hashedPassword })
         await this.userRepository.save(user)
+
+        // Add send email to queue
+        await this.queueService.sendEmailRegistrationSuccess(user.email, user.name);
+        
         return { ...user, password: undefined };
     }
 
