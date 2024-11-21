@@ -10,6 +10,7 @@ import { ZodValidationPipe } from 'nestjs-zod';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { FoodModule } from './food/food.module';
+import { OrderModule } from './order/order.module';
 
 @Module({
     imports: [
@@ -23,7 +24,8 @@ import { FoodModule } from './food/food.module';
         FoodCategoryModule,
         UserModule,
         AuthModule,
-        FoodModule
+        FoodModule,
+        OrderModule
     ],
     controllers: [AppController],
     providers: [
