@@ -1,34 +1,47 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, HttpStatus, UseGuards, Req } from '@nestjs/common';
 import { OrderService } from './order.service';
 import { CreateOrderDto } from './dto/create-order.dto';
-import { UpdateOrderDto } from './dto/update-order.dto';
+import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { RolesGuard } from 'src/auth/roles.guard';
+import { Roles } from 'src/shared/decorators/roles.decorator';
+import { ResponseDto } from 'src/shared/dto/response.dto';
+import { Order } from './entities/order.entity';
 
-@Controller('orders')
+@Controller('api/v1/orders')
+@ApiTags("Order Management")
+@ApiBearerAuth()
+@UseGuards(JwtAuthGuard, RolesGuard)
 export class OrderController {
-    constructor(private readonly orderService: OrderService) { }
+    constructor(
+        private readonly orderService: OrderService
+    ) { }
 
     @Post()
-    create(@Body() createOrderDto: CreateOrderDto) {
-        return this.orderService.create(createOrderDto);
+    @Roles(['admin', 'user'])
+    async create(@Body() createOrderDto: CreateOrderDto): Promise<ResponseDto<Order>> {
+        const order = await this.orderService.create(createOrderDto);
+        return {
+            statusCode: HttpStatus.CREATED,
+            message: 'Order created successfully',
+            data: order,
+        };
     }
 
     @Get()
-    findAll() {
-        return this.orderService.findAll();
+    @Roles(['admin', 'user'])
+    async findAll(@Req() req: any): Promise<ResponseDto<Order[]>> {
+        const orders = await this.orderService.findAll(req.user);
+        return {
+            statusCode: HttpStatus.OK,
+            message: 'Orders retrieved successfully',
+            data: orders,
+        };
     }
 
     @Get(':id')
-    findOne(@Param('id') id: string) {
+    @Roles(['admin', 'user'])
+    async findOne(@Param('id') id: string) {
         return this.orderService.findOne(+id);
-    }
-
-    @Patch(':id')
-    update(@Param('id') id: string, @Body() updateOrderDto: UpdateOrderDto) {
-        return this.orderService.update(+id, updateOrderDto);
-    }
-
-    @Delete(':id')
-    remove(@Param('id') id: string) {
-        return this.orderService.remove(+id);
     }
 }
