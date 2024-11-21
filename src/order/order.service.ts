@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { User } from 'src/user/entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -80,7 +80,15 @@ export class OrderService {
         });
     }
 
-    async findOne(id: number) {
-        return `This action returns a #${id} order`;
+    async findOne(requester: any, id: number) {
+        const order = await this.orderRepository.findOne({
+            where: { id },
+            relations: { user: true, orderItems: { food: { foodCategory: true } } },
+            select: { user: { id: true, email: true, name: true } },
+        })
+        if (requester.role === 'user' && requester.id !== order.user.id) {
+            throw new ForbiddenException('You are not allowed to retrieve this order data');
+        }
+        return order
     }
 }

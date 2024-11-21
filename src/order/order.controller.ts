@@ -12,13 +12,13 @@ import { Order } from './entities/order.entity';
 @ApiTags("Order Management")
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard, RolesGuard)
+@Roles(['admin', 'user'])
 export class OrderController {
     constructor(
         private readonly orderService: OrderService
     ) { }
 
     @Post()
-    @Roles(['admin', 'user'])
     async create(@Body() createOrderDto: CreateOrderDto): Promise<ResponseDto<Order>> {
         const order = await this.orderService.create(createOrderDto);
         return {
@@ -29,7 +29,6 @@ export class OrderController {
     }
 
     @Get()
-    @Roles(['admin', 'user'])
     async findAll(@Req() req: any): Promise<ResponseDto<Order[]>> {
         const orders = await this.orderService.findAll(req.user);
         return {
@@ -40,8 +39,12 @@ export class OrderController {
     }
 
     @Get(':id')
-    @Roles(['admin', 'user'])
-    async findOne(@Param('id') id: string) {
-        return this.orderService.findOne(+id);
+    async findOne(@Req() req: any, @Param('id') id: string): Promise<ResponseDto<Order>> {
+        const order = await this.orderService.findOne(req.user, +id);
+        return {
+            statusCode: HttpStatus.OK,
+            message: 'Order retrieved successfully',
+            data: order,
+        };
     }
 }
