@@ -12,6 +12,8 @@ import { AuthModule } from './auth/auth.module';
 import { FoodModule } from './food/food.module';
 import { BullModule } from '@nestjs/bullmq';
 import { QueueModule } from './queue/queue.module';
+import { OrderModule } from './order/order.module';
+import { redisConfig } from './shared/configs/redis.config';
 
 @Module({
     imports: [
@@ -23,19 +25,15 @@ import { QueueModule } from './queue/queue.module';
             inject: [ConfigService],
         }),
         BullModule.forRootAsync({
+            useFactory: redisConfig,
             inject: [ConfigService],
-            useFactory: (configService: ConfigService) => ({
-                connection: {
-                    host: configService.get<string>('REDIS_HOST', 'localhost'),
-                    port: configService.get<number>('REDIS_PORT', 6379),
-                },
-            }),
         }),
         FoodCategoryModule,
         UserModule,
         AuthModule,
         FoodModule,
-        QueueModule
+        QueueModule,
+        OrderModule
     ],
     controllers: [AppController],
     providers: [
