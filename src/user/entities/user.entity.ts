@@ -1,5 +1,6 @@
+import { Order } from "src/order/entities/order.entity";
 import { BaseEntity } from "src/shared/entities/base.entity";
-import { Entity, Column } from "typeorm";
+import { Entity, Column, OneToMany } from "typeorm";
 
 export enum UserRole {
     Admin = 'admin',
@@ -26,4 +27,7 @@ export class User extends BaseEntity {
 
     @Column({ type: 'timestamptz', nullable: true })
     lastLoginAt: Date;
+
+    @OneToMany(() => Order, (order) => order.user)
+    orders: Order[];
 }
