@@ -1,4 +1,3 @@
-
 import {
     ExecutionContext,
     Injectable,
@@ -27,7 +26,9 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
 
         const token = authorization.split(' ')[1];
         try {
-            const payload = this.jwtService.verify(token, { secret: this.configService.getOrThrow('JWT_SECRET') || '' });
+            const payload = this.jwtService.verify(token, {
+                secret: this.configService.getOrThrow('JWT_SECRET') || '',
+            });
             request.user = payload;
             return true;
         } catch (error) {

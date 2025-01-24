@@ -33,7 +33,7 @@ import { redisConfig } from './shared/configs/redis.config';
         AuthModule,
         FoodModule,
         QueueModule,
-        OrderModule
+        OrderModule,
     ],
     controllers: [AppController],
     providers: [
@@ -41,7 +41,7 @@ import { redisConfig } from './shared/configs/redis.config';
             provide: APP_PIPE,
             useClass: ZodValidationPipe,
         },
-        AppService
+        AppService,
     ],
 })
-export class AppModule { }
+export class AppModule {}

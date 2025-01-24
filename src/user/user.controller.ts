@@ -1,4 +1,15 @@
-import { Controller, Get, Body, Patch, Param, Delete, HttpStatus, UseGuards, Req, ForbiddenException } from '@nestjs/common';
+import {
+    Controller,
+    Get,
+    Body,
+    Patch,
+    Param,
+    Delete,
+    HttpStatus,
+    UseGuards,
+    Req,
+    ForbiddenException,
+} from '@nestjs/common';
 import { UserService } from './user.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
@@ -9,11 +20,11 @@ import { Roles } from 'src/shared/decorators/roles.decorator';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 
 @Controller('api/v1/users')
-@ApiTags("User Management")
+@ApiTags('User Management')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class UserController {
-    constructor(private readonly userService: UserService) { }
+    constructor(private readonly userService: UserService) {}
 
     @Get()
     @Roles(['admin'])
@@ -28,9 +39,19 @@ export class UserController {
 
     @Get(':id')
     @Roles(['admin', 'user'])
-    async findOne(@Req() req: any, @Param('id') id: string): Promise<ResponseDto<User>> {
-        const userValid = await this.userService.validateUser(req.user.role, +req.user.id, +id)
-        if (!userValid) throw new ForbiddenException('You are not allowed to retrieve this user data');
+    async findOne(
+        @Req() req: any,
+        @Param('id') id: string,
+    ): Promise<ResponseDto<User>> {
+        const userValid = await this.userService.validateUser(
+            req.user.role,
+            +req.user.id,
+            +id,
+        );
+        if (!userValid)
+            throw new ForbiddenException(
+                'You are not allowed to retrieve this user data',
+            );
 
         const user = await this.userService.findOne(+id);
         return {
@@ -47,8 +68,15 @@ export class UserController {
         @Param('id') id: string,
         @Body() updateUserDto: UpdateUserDto,
     ): Promise<ResponseDto<User>> {
-        const userValid = await this.userService.validateUser(req.user.role, +req.user.id, +id)
-        if (!userValid) throw new ForbiddenException('You are not allowed to update this user');
+        const userValid = await this.userService.validateUser(
+            req.user.role,
+            +req.user.id,
+            +id,
+        );
+        if (!userValid)
+            throw new ForbiddenException(
+                'You are not allowed to update this user',
+            );
 
         const updatedUser = await this.userService.update(+id, updateUserDto);
         return {
@@ -60,9 +88,19 @@ export class UserController {
 
     @Delete(':id')
     @Roles(['admin', 'user'])
-    async remove(@Req() req: any, @Param('id') id: string): Promise<ResponseDto<null>> {
-        const userValid = await this.userService.validateUser(req.user.role, +req.user.id, +id)
-        if (!userValid) throw new ForbiddenException('You are not allowed to delete this user');
+    async remove(
+        @Req() req: any,
+        @Param('id') id: string,
+    ): Promise<ResponseDto<null>> {
+        const userValid = await this.userService.validateUser(
+            req.user.role,
+            +req.user.id,
+            +id,
+        );
+        if (!userValid)
+            throw new ForbiddenException(
+                'You are not allowed to delete this user',
+            );
 
         await this.userService.remove(+id);
         return {

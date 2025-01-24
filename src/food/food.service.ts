@@ -1,4 +1,8 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+    ConflictException,
+    Injectable,
+    NotFoundException,
+} from '@nestjs/common';
 import { CreateFoodDto } from './dto/create-food.dto';
 import { UpdateFoodDto } from './dto/update-food.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -13,27 +17,32 @@ export class FoodService {
         private readonly foodRepository: Repository<Food>,
         @InjectRepository(FoodCategory)
         private readonly foodCategoryRepository: Repository<FoodCategory>,
-    ) { }
+    ) {}
     async create(createFoodDto: CreateFoodDto) {
-        const nameExist = await this.foodRepository.exists({ where: { name: createFoodDto.name } })
+        const nameExist = await this.foodRepository.exists({
+            where: { name: createFoodDto.name },
+        });
         if (nameExist) {
             throw new ConflictException('The food name already exists');
         }
-        const foodCategory = await this.foodCategoryRepository.findOne({ where: { id: createFoodDto.foodCategoryId } })
-        if (!foodCategory) throw new NotFoundException('Food category not found');
+        const foodCategory = await this.foodCategoryRepository.findOne({
+            where: { id: createFoodDto.foodCategoryId },
+        });
+        if (!foodCategory)
+            throw new NotFoundException('Food category not found');
 
         const food = this.foodRepository.create({
             ...createFoodDto,
-            foodCategory: { id: createFoodDto.foodCategoryId }
-        })
-        await this.foodRepository.save(food)
+            foodCategory: { id: createFoodDto.foodCategoryId },
+        });
+        await this.foodRepository.save(food);
         return food;
     }
 
     async findAll() {
         return await this.foodRepository.find({
             relations: { foodCategory: true },
-            select: { foodCategory: { id: true, name: true } }
+            select: { foodCategory: { id: true, name: true } },
         });
     }
 
@@ -41,14 +50,14 @@ export class FoodService {
         const food = await this.foodRepository.findOne({
             where: { id },
             relations: { foodCategory: true },
-            select: { foodCategory: { id: true, name: true } }
-        })
+            select: { foodCategory: { id: true, name: true } },
+        });
         if (!food) throw new NotFoundException(`Food with ID ${id} not found`);
         return food;
     }
 
     async update(id: number, updateFoodDto: UpdateFoodDto) {
-        const food = await this.foodRepository.findOne({ where: { id } })
+        const food = await this.foodRepository.findOne({ where: { id } });
         if (!food) throw new NotFoundException(`Food with ID ${id} not found`);
 
         const { name, foodCategoryId } = updateFoodDto;
@@ -61,8 +70,11 @@ export class FoodService {
             }
         }
         if (foodCategoryId) {
-            const foodCategory = await this.foodCategoryRepository.findOne({ where: { id: foodCategoryId } })
-            if (!foodCategory) throw new NotFoundException('Food category not found');
+            const foodCategory = await this.foodCategoryRepository.findOne({
+                where: { id: foodCategoryId },
+            });
+            if (!foodCategory)
+                throw new NotFoundException('Food category not found');
         }
 
         Object.assign(food, updateFoodDto);
@@ -72,6 +84,6 @@ export class FoodService {
     async remove(id: number) {
         const food = await this.foodRepository.findOne({ where: { id } });
         if (!food) throw new NotFoundException(`Food with ID ${id} not found`);
-        await this.foodRepository.remove(food)
+        await this.foodRepository.remove(food);
     }
 }

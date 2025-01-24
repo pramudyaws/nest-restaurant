@@ -1,4 +1,14 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, HttpStatus, UseGuards } from '@nestjs/common';
+import {
+    Controller,
+    Get,
+    Post,
+    Body,
+    Patch,
+    Param,
+    Delete,
+    HttpStatus,
+    UseGuards,
+} from '@nestjs/common';
 import { FoodService } from './food.service';
 import { CreateFoodDto } from './dto/create-food.dto';
 import { UpdateFoodDto } from './dto/update-food.dto';
@@ -10,15 +20,17 @@ import { Food } from './entities/food.entity';
 import { ResponseDto } from 'src/shared/dto/response.dto';
 
 @Controller('api/v1/foods')
-@ApiTags("Food Management")
+@ApiTags('Food Management')
 export class FoodController {
-    constructor(private readonly foodService: FoodService) { }
+    constructor(private readonly foodService: FoodService) {}
 
     @Post()
     @ApiBearerAuth()
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Roles(['admin'])
-    async create(@Body() createFoodDto: CreateFoodDto): Promise<ResponseDto<Food>> {
+    async create(
+        @Body() createFoodDto: CreateFoodDto,
+    ): Promise<ResponseDto<Food>> {
         const food = await this.foodService.create(createFoodDto);
         return {
             statusCode: HttpStatus.CREATED,
@@ -51,7 +63,10 @@ export class FoodController {
     @ApiBearerAuth()
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Roles(['admin'])
-    async update(@Param('id') id: string, @Body() updateFoodDto: UpdateFoodDto): Promise<ResponseDto<Food>> {
+    async update(
+        @Param('id') id: string,
+        @Body() updateFoodDto: UpdateFoodDto,
+    ): Promise<ResponseDto<Food>> {
         const updatedFood = await this.foodService.update(+id, updateFoodDto);
         return {
             statusCode: HttpStatus.OK,

@@ -1,6 +1,6 @@
-import { Order } from "src/order/entities/order.entity";
-import { BaseEntity } from "src/shared/entities/base.entity";
-import { Entity, Column, OneToMany } from "typeorm";
+import { Order } from 'src/order/entities/order.entity';
+import { BaseEntity } from 'src/shared/entities/base.entity';
+import { Entity, Column, OneToMany } from 'typeorm';
 
 export enum UserRole {
     Admin = 'admin',

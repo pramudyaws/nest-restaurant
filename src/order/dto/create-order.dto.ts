@@ -17,4 +17,4 @@ const CreateOrderSchema = z.object({
         ]),
 });
 
-export class CreateOrderDto extends createZodDto(CreateOrderSchema) { }
+export class CreateOrderDto extends createZodDto(CreateOrderSchema) {}

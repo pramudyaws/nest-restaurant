@@ -1,4 +1,8 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+    ConflictException,
+    Injectable,
+    NotFoundException,
+} from '@nestjs/common';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -9,14 +13,14 @@ export class UserService {
     constructor(
         @InjectRepository(User)
         private readonly userRepository: Repository<User>,
-    ) { }
+    ) {}
     async findAll() {
         const users = await this.userRepository.find();
-        return users.map(user => ({ ...user, password: undefined }));
+        return users.map((user) => ({ ...user, password: undefined }));
     }
 
     async findOne(id: number) {
-        const user = await this.userRepository.findOne({ where: { id } })
+        const user = await this.userRepository.findOne({ where: { id } });
         if (!user) throw new NotFoundException(`User with ID ${id} not found`);
         return { ...user, password: undefined };
     }
@@ -36,17 +40,21 @@ export class UserService {
         }
 
         Object.assign(user, updateUserDto);
-        const updatedUser = await this.userRepository.save(user)
+        const updatedUser = await this.userRepository.save(user);
         return { ...updatedUser, password: undefined };
     }
 
     async remove(id: number) {
         const user = await this.userRepository.findOne({ where: { id } });
         if (!user) throw new NotFoundException(`User with ID ${id} not found`);
-        await this.userRepository.remove(user)
+        await this.userRepository.remove(user);
     }
 
-    async validateUser(requesterRole: string, requesterId: number, userId: number) {
+    async validateUser(
+        requesterRole: string,
+        requesterId: number,
+        userId: number,
+    ) {
         return requesterRole === 'user' && requesterId === userId;
     }
 }

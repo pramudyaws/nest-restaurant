@@ -5,10 +5,8 @@ import { QUEUE_CONSTANTS } from 'src/shared/constants/queue.constants';
 
 @Processor(QUEUE_CONSTANTS.SEND_EMAIL)
 export class MailConsumer extends WorkerHost {
-    constructor(
-        private readonly mailService: MailService
-    ) {
-        super()
+    constructor(private readonly mailService: MailService) {
+        super();
     }
 
     async process(job: Job<any, any, string>): Promise<any> {

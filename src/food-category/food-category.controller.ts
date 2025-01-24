@@ -1,4 +1,14 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, HttpStatus, UseGuards } from '@nestjs/common';
+import {
+    Controller,
+    Get,
+    Post,
+    Body,
+    Patch,
+    Param,
+    Delete,
+    HttpStatus,
+    UseGuards,
+} from '@nestjs/common';
 import { FoodCategoryService } from './food-category.service';
 import { CreateFoodCategoryDto } from './dto/create-food-category.dto';
 import { UpdateFoodCategoryDto } from './dto/update-food-category.dto';
@@ -10,16 +20,20 @@ import { Roles } from 'src/shared/decorators/roles.decorator';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 
 @Controller('api/v1/food-categories')
-@ApiTags("Food Category Management")
+@ApiTags('Food Category Management')
 export class FoodCategoryController {
-    constructor(private readonly foodCategoryService: FoodCategoryService) { }
+    constructor(private readonly foodCategoryService: FoodCategoryService) {}
 
     @Post()
     @ApiBearerAuth()
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Roles(['admin'])
-    async create(@Body() createFoodCategoryDto: CreateFoodCategoryDto): Promise<ResponseDto<FoodCategory>> {
-        const foodCategory = await this.foodCategoryService.create(createFoodCategoryDto);
+    async create(
+        @Body() createFoodCategoryDto: CreateFoodCategoryDto,
+    ): Promise<ResponseDto<FoodCategory>> {
+        const foodCategory = await this.foodCategoryService.create(
+            createFoodCategoryDto,
+        );
         return {
             statusCode: HttpStatus.CREATED,
             message: 'Food category created successfully',
@@ -55,7 +69,10 @@ export class FoodCategoryController {
         @Param('id') id: string,
         @Body() updateFoodCategoryDto: UpdateFoodCategoryDto,
     ): Promise<ResponseDto<FoodCategory>> {
-        const updatedFoodCategory = await this.foodCategoryService.update(+id, updateFoodCategoryDto);
+        const updatedFoodCategory = await this.foodCategoryService.update(
+            +id,
+            updateFoodCategoryDto,
+        );
         return {
             statusCode: HttpStatus.OK,
             message: 'Food category updated successfully',

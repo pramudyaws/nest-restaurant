@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Body, Param, HttpStatus, UseGuards, Req } from '@nestjs/common';
+import {
+    Controller,
+    Get,
+    Post,
+    Body,
+    Param,
+    HttpStatus,
+    UseGuards,
+    Req,
+} from '@nestjs/common';
 import { OrderService } from './order.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
@@ -9,17 +18,17 @@ import { ResponseDto } from 'src/shared/dto/response.dto';
 import { Order } from './entities/order.entity';
 
 @Controller('api/v1/orders')
-@ApiTags("Order Management")
+@ApiTags('Order Management')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles(['admin', 'user'])
 export class OrderController {
-    constructor(
-        private readonly orderService: OrderService
-    ) { }
+    constructor(private readonly orderService: OrderService) {}
 
     @Post()
-    async create(@Body() createOrderDto: CreateOrderDto): Promise<ResponseDto<Order>> {
+    async create(
+        @Body() createOrderDto: CreateOrderDto,
+    ): Promise<ResponseDto<Order>> {
         const order = await this.orderService.create(createOrderDto);
         return {
             statusCode: HttpStatus.CREATED,
@@ -39,7 +48,10 @@ export class OrderController {
     }
 
     @Get(':id')
-    async findOne(@Req() req: any, @Param('id') id: string): Promise<ResponseDto<Order>> {
+    async findOne(
+        @Req() req: any,
+        @Param('id') id: string,
+    ): Promise<ResponseDto<Order>> {
         const order = await this.orderService.findOne(req.user, +id);
         return {
             statusCode: HttpStatus.OK,

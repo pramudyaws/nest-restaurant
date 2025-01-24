@@ -6,10 +6,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { FoodCategory } from 'src/food-category/entities/food-category.entity';
 
 @Module({
-    imports: [
-        TypeOrmModule.forFeature([Food, FoodCategory])
-    ],
+    imports: [TypeOrmModule.forFeature([Food, FoodCategory])],
     controllers: [FoodController],
     providers: [FoodService],
 })
-export class FoodModule { }
+export class FoodModule {}

@@ -1,4 +1,8 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+    ConflictException,
+    Injectable,
+    NotFoundException,
+} from '@nestjs/common';
 import { CreateFoodCategoryDto } from './dto/create-food-category.dto';
 import { UpdateFoodCategoryDto } from './dto/update-food-category.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -10,14 +14,20 @@ export class FoodCategoryService {
     constructor(
         @InjectRepository(FoodCategory)
         private readonly foodCategoryRepository: Repository<FoodCategory>,
-    ) { }
+    ) {}
     async create(createFoodCategoryDto: CreateFoodCategoryDto) {
-        const nameExist = await this.foodCategoryRepository.exists({ where: { name: createFoodCategoryDto.name } })
+        const nameExist = await this.foodCategoryRepository.exists({
+            where: { name: createFoodCategoryDto.name },
+        });
         if (nameExist) {
-            throw new ConflictException('The food category name already exists');
+            throw new ConflictException(
+                'The food category name already exists',
+            );
         }
-        const foodCategory = this.foodCategoryRepository.create(createFoodCategoryDto)
-        await this.foodCategoryRepository.save(foodCategory)
+        const foodCategory = this.foodCategoryRepository.create(
+            createFoodCategoryDto,
+        );
+        await this.foodCategoryRepository.save(foodCategory);
         return foodCategory;
     }
 
@@ -26,14 +36,24 @@ export class FoodCategoryService {
     }
 
     async findOne(id: number) {
-        const foodCategory = await this.foodCategoryRepository.findOne({ where: { id } })
-        if (!foodCategory) throw new NotFoundException(`Food category with ID ${id} not found`);
+        const foodCategory = await this.foodCategoryRepository.findOne({
+            where: { id },
+        });
+        if (!foodCategory)
+            throw new NotFoundException(
+                `Food category with ID ${id} not found`,
+            );
         return foodCategory;
     }
 
     async update(id: number, updateFoodCategoryDto: UpdateFoodCategoryDto) {
-        const foodCategory = await this.foodCategoryRepository.findOne({ where: { id } });
-        if (!foodCategory) throw new NotFoundException(`Food category with ID ${id} not found`);
+        const foodCategory = await this.foodCategoryRepository.findOne({
+            where: { id },
+        });
+        if (!foodCategory)
+            throw new NotFoundException(
+                `Food category with ID ${id} not found`,
+            );
 
         const { name } = updateFoodCategoryDto;
         if (name) {
@@ -41,7 +61,9 @@ export class FoodCategoryService {
                 where: { name, id: Not(id) },
             });
             if (nameExist) {
-                throw new ConflictException('The food category name already exists');
+                throw new ConflictException(
+                    'The food category name already exists',
+                );
             }
         }
 
@@ -50,8 +72,13 @@ export class FoodCategoryService {
     }
 
     async remove(id: number) {
-        const foodCategory = await this.foodCategoryRepository.findOne({ where: { id } });
-        if (!foodCategory) throw new NotFoundException(`Food category with ID ${id} not found`);
-        await this.foodCategoryRepository.remove(foodCategory)
+        const foodCategory = await this.foodCategoryRepository.findOne({
+            where: { id },
+        });
+        if (!foodCategory)
+            throw new NotFoundException(
+                `Food category with ID ${id} not found`,
+            );
+        await this.foodCategoryRepository.remove(foodCategory);
     }
 }

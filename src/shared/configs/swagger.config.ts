@@ -1,8 +1,8 @@
-import { INestApplication } from "@nestjs/common";
-import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
+import { INestApplication } from '@nestjs/common';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 export function initializeSwagger(app: INestApplication<any>) {
-    const apiVersion = '1.0.0'
+    const apiVersion = '1.0.0';
     const config = new DocumentBuilder()
         .setTitle(`Nest Restaurant API`)
         .setDescription(`API Documentation v${apiVersion}`)
