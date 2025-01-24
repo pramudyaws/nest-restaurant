@@ -1,4 +1,8 @@
-import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+    ForbiddenException,
+    Injectable,
+    NotFoundException,
+} from '@nestjs/common';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { User } from 'src/user/entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -18,42 +22,55 @@ export class OrderService {
         private readonly foodRepository: Repository<Food>,
         @InjectRepository(User)
         private readonly userRepository: Repository<User>,
-    ) { }
+    ) {}
     async create(createOrderDto: CreateOrderDto) {
-        const { userId, orderItems } = createOrderDto
+        const { userId, orderItems } = createOrderDto;
 
         // Validate user
-        const user = await this.userRepository.findOne({ where: { id: userId } })
-        if (!user) throw new NotFoundException(`User with ID ${userId} not found`);
+        const user = await this.userRepository.findOne({
+            where: { id: userId },
+        });
+        if (!user)
+            throw new NotFoundException(`User with ID ${userId} not found`);
 
         // Validate food
-        const foodIds = orderItems.map(item => item.foodId);
-        const validFoods = await this.foodRepository.findBy({ id: In(foodIds) });
+        const foodIds = orderItems.map((item) => item.foodId);
+        const validFoods = await this.foodRepository.find({
+            where: { id: In(foodIds) },
+            relations: { foodCategory: true },
+        });
         if (validFoods.length !== foodIds.length) {
             const invalidFoodIds = foodIds.filter(
-                foodId => !validFoods.some(validFood => validFood.id === foodId)
+                (foodId) =>
+                    !validFoods.some((validFood) => validFood.id === foodId),
             );
-            throw new NotFoundException(`Food(s) with ID(s) ${invalidFoodIds.join(', ')} not found`);
+            throw new NotFoundException(
+                `Food(s) with ID(s) ${invalidFoodIds.join(', ')} not found`,
+            );
         }
 
         // Calculate total price
         let totalPrice = 0;
-        const orderItemsToSave = orderItems.map(item => {
-            const food = validFoods.find(f => f.id === item.foodId);
+        const orderItemsToSave = orderItems.map((item) => {
+            const food = validFoods.find((f) => f.id === item.foodId);
             const itemTotalPrice = food.price * item.quantity;
             totalPrice += itemTotalPrice;
 
             return this.orderItemRepository.create({
                 food,
+                foodName: food.name,
+                foodPrice: food.price,
+                foodCategoryName: food.foodCategory.name,
                 quantity: item.quantity,
-                price: food.price,
             });
         });
 
         const order = this.orderRepository.create({
             user,
             totalPrice,
-            orderItems: [],
+            userEmail: user.email,
+            userName: user.name,
+            userRole: user.role,
         });
         let savedOrder = await this.orderRepository.save(order);
 
@@ -64,18 +81,25 @@ export class OrderService {
 
         savedOrder = await this.orderRepository.findOne({
             where: { id: savedOrder.id },
-            relations: { user: true, orderItems: { food: { foodCategory: true } } },
-            select: { user: { id: true, email: true, name: true } }
-        })
+            relations: {
+                user: true,
+                orderItems: { food: { foodCategory: true } },
+            },
+            select: { user: { id: true, email: true, name: true } },
+        });
 
-        return savedOrder
+        return savedOrder;
     }
 
     async findAll(requester: any) {
-        const where = requester.role === 'admin' ? {} : { user: { id: requester.id } };
+        const where =
+            requester.role === 'admin' ? {} : { user: { id: requester.id } };
         return await this.orderRepository.find({
             where,
-            relations: { user: true, orderItems: { food: { foodCategory: true } } },
+            relations: {
+                user: true,
+                orderItems: { food: { foodCategory: true } },
+            },
             select: { user: { id: true, email: true, name: true } },
         });
     }
@@ -83,12 +107,17 @@ export class OrderService {
     async findOne(requester: any, id: number) {
         const order = await this.orderRepository.findOne({
             where: { id },
-            relations: { user: true, orderItems: { food: { foodCategory: true } } },
+            relations: {
+                user: true,
+                orderItems: { food: { foodCategory: true } },
+            },
             select: { user: { id: true, email: true, name: true } },
-        })
+        });
         if (requester.role === 'user' && requester.id !== order.user.id) {
-            throw new ForbiddenException('You are not allowed to retrieve this order data');
+            throw new ForbiddenException(
+                'You are not allowed to retrieve this order data',
+            );
         }
-        return order
+        return order;
     }
 }
