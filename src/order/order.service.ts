@@ -10,6 +10,8 @@ import { Food } from 'src/food/entities/food.entity';
 import { In, Repository } from 'typeorm';
 import { Order } from './entities/order.entity';
 import { OrderItem } from './entities/order-item.entity';
+import { Notification } from 'src/notification/entities/notification.entity';
+import { NotificationService } from 'src/notification/notification.service';
 
 @Injectable()
 export class OrderService {
@@ -22,6 +24,7 @@ export class OrderService {
         private readonly foodRepository: Repository<Food>,
         @InjectRepository(User)
         private readonly userRepository: Repository<User>,
+        private readonly notificationService: NotificationService,
     ) {}
     async create(createOrderDto: CreateOrderDto) {
         const { userId, orderItems } = createOrderDto;
@@ -87,6 +90,12 @@ export class OrderService {
             },
             select: { user: { id: true, email: true, name: true } },
         });
+
+        // Create notification
+        await this.notificationService.createNotification(
+            userId,
+            `Your order #${savedOrder.id} has been created successfully!`,
+        );
 
         return savedOrder;
     }
