@@ -6,12 +6,7 @@ import {
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 
-@WebSocketGateway({
-    cors: {
-        origin: '*',
-    },
-    transport: ['websocket'],
-})
+@WebSocketGateway(3001, { cors: { origin: '*' } })
 export class NotificationGateway
     implements OnGatewayConnection, OnGatewayDisconnect
 {
@@ -29,7 +24,7 @@ export class NotificationGateway
         const userId = client.handshake.query.userId as string;
         if (userId) {
             this.connectedUsers.set(+userId, client.id);
-            console.log(`User ${userId} connected.`);
+            console.log(`User with ID ${userId} connected.`);
         }
     }
 
@@ -39,7 +34,7 @@ export class NotificationGateway
         )?.[0];
         if (userId) {
             this.connectedUsers.delete(userId);
-            console.log(`User ${userId} disconnected.`);
+            console.log(`User with ID ${userId} disconnected.`);
         }
     }
 

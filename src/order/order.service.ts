@@ -10,7 +10,6 @@ import { Food } from 'src/food/entities/food.entity';
 import { In, Repository } from 'typeorm';
 import { Order } from './entities/order.entity';
 import { OrderItem } from './entities/order-item.entity';
-import { Notification } from 'src/notification/entities/notification.entity';
 import { NotificationService } from 'src/notification/notification.service';
 
 @Injectable()
