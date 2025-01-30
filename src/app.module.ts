@@ -14,6 +14,7 @@ import { BullModule } from '@nestjs/bullmq';
 import { QueueModule } from './queue/queue.module';
 import { OrderModule } from './order/order.module';
 import { redisConfig } from './shared/configs/redis.config';
+import { NotificationModule } from './notification/notification.module';
 
 @Module({
     imports: [
@@ -34,6 +35,7 @@ import { redisConfig } from './shared/configs/redis.config';
         FoodModule,
         QueueModule,
         OrderModule,
+        NotificationModule,
     ],
     controllers: [AppController],
     providers: [
