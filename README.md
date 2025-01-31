@@ -26,6 +26,11 @@ $ npm run start:dev
 After running the project, visit `http://localhost:{PORT}/api-docs/v1` to see the Swagger API Documentation. 
 > **Note:** Replace `{PORT}` with the actual port number defined in your `.env` file.
 
+## Socket.IO in Postman
+
+Check WebSocket connection in Postman by creating new Postman Socket.IO. After creating new Socket.IO, change URL to `ws://localhost:{gateway-port}?userId={user-id}`, add `notification` "Events", turn on "Listen", and hit "Connect" button. After creating an order by some userId, Postman Socket.IO will show new notification response in realtime.
+> Current gateway-port is 3001. Check `notification.gateway.ts` to change the gateway port.
+
 ## Technologies
 
 - **Typescript**: Backend programming language
